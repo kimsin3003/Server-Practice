@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChatServer", "ChatServer\ChatServer.vcxproj", "{22689546-E459-4532-8A4F-5207DC235394}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerNet", "ServerNet\ServerNet.vcxproj", "{F894B03F-1A7F-46F9-BA44-764AFEED5088}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{22689546-E459-4532-8A4F-5207DC235394}.Debug|x64.ActiveCfg = Debug|x64
-		{22689546-E459-4532-8A4F-5207DC235394}.Debug|x64.Build.0 = Debug|x64
-		{22689546-E459-4532-8A4F-5207DC235394}.Debug|x86.ActiveCfg = Debug|Win32
-		{22689546-E459-4532-8A4F-5207DC235394}.Debug|x86.Build.0 = Debug|Win32
-		{22689546-E459-4532-8A4F-5207DC235394}.Release|x64.ActiveCfg = Release|x64
-		{22689546-E459-4532-8A4F-5207DC235394}.Release|x64.Build.0 = Release|x64
-		{22689546-E459-4532-8A4F-5207DC235394}.Release|x86.ActiveCfg = Release|Win32
-		{22689546-E459-4532-8A4F-5207DC235394}.Release|x86.Build.0 = Release|Win32
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Debug|x64.ActiveCfg = Debug|x64
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Debug|x64.Build.0 = Debug|x64
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Debug|x86.ActiveCfg = Debug|Win32
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Debug|x86.Build.0 = Debug|Win32
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Release|x64.ActiveCfg = Release|x64
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Release|x64.Build.0 = Release|x64
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Release|x86.ActiveCfg = Release|Win32
+		{F894B03F-1A7F-46F9-BA44-764AFEED5088}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
