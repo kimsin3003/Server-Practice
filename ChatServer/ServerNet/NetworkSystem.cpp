@@ -36,7 +36,7 @@ namespace ChatServer
 		FD_ZERO(&m_fdSet);
 		FD_SET(m_listeningSocket, &m_fdSet);
 
-		CreateSessionPool(m_config->maxClientCount + m_config->extraClientCount);
+		CreateSessionPool(m_config.maxClientCount + m_config.extraClientCount);
 
 		return NETWORK_ERROR_CODE::NONE;
 	}
@@ -71,8 +71,8 @@ namespace ChatServer
 			ClientSession session;
 			ZeroMemory(&session, sizeof(session));
 			session.Index = i;
-			session.pRecvBuffer = new char[m_config->maxClientRecvBufferSize];
-			session.pSendBuffer = new char[m_config->maxClientSendBufferSize];
+			session.pRecvBuffer = new char[m_config.maxClientRecvBufferSize];
+			session.pSendBuffer = new char[m_config.maxClientSendBufferSize];
 
 			m_clientSessionPool.push_back(session);
 			m_ClientSessionPoolIndex.push_back(session.Index);
@@ -132,9 +132,53 @@ namespace ChatServer
 
 	}
 
-	void NetworkSystem::NewSession()
+	ChatServer::NETWORK_ERROR_CODE NetworkSystem::NewSession()
+{
+		SOCKADDR_IN client_addr;
+		auto client_len = static_cast<int>(sizeof(client_addr));
+		auto client_sock = accept(m_listeningSocket, (SOCKADDR*)&client_addr, &client_len);
+
+		if (client_sock < 0)
+		{
+			m_logger->Write(LOG_TYPE::L_ERROR, "%s | Wrong socket %d cannot accept", __FUNCTION__, client_sock);
+			return NETWORK_ERROR_CODE::ACCEPT_API_ERROR;
+		}
+
+
+		auto newSessionIndex = AllocClientSessionIndex();
+		if (newSessionIndex < 0)
+		{
+			m_logger->Write(LOG_TYPE::L_WARN, "%s | client_sockfd(%d)  >= MAX_SESSION", __FUNCTION__, client_sock);
+
+			// 더 이상 수용할 수 없으므로 바로 짜른다.
+			CloseSession(SOCKET_CLOSE_CASE::SESSION_POOL_EMPTY, client_sock, -1);
+			return NETWORK_ERROR_CODE::ACCEPT_MAX_SESSION_COUNT;
+		}
+
+		char clientIP[MAX_IP_LEN] = { 0, };
+		inet_ntop(AF_INET, &(client_addr.sin_addr), clientIP, MAX_IP_LEN - 1);
+
+		SetSockOption(client_sock);
+
+		FD_SET(client_sock, &m_fdSet);
+
+		ConnectedSession(newSessionIndex, (int)client_sock, clientIP);
+
+		return NETWORK_ERROR_CODE::NONE;
+	}
+
+
+	void NetworkSystem::SetSockOption(const SOCKET fd)
 	{
-		
+		linger ling;
+		ling.l_onoff = 0;
+		ling.l_linger = 0;
+		setsockopt(fd, SOL_SOCKET, SO_LINGER, (char*)&ling, sizeof(ling));
+
+		int size1 = m_config.maxClientSockOptRecvBufferSize;
+		int size2 = m_config.maxClientSockOptSendBufferSize;
+		setsockopt(fd, SOL_SOCKET, SO_RCVBUF, (char*)&size1, sizeof(size1));
+		setsockopt(fd, SOL_SOCKET, SO_SNDBUF, (char*)&size2, sizeof(size2));
 	}
 
 

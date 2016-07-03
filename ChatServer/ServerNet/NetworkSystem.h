@@ -4,7 +4,7 @@
 
 //#pragma comment(lib, "ws2_32")
 #include <winsock2.h>
-//#include <ws2tcpip.h>
+#include <ws2tcpip.h>
 #include <vector>
 #include <deque>
 #include "define.h"
@@ -26,13 +26,14 @@ namespace ChatServer
 		PacketInfo GetPacketInfo();
 
 	private:
-		void NewSession();
+		NETWORK_ERROR_CODE NewSession();
+		void SetSockOption(const SOCKET fd);
 		void CheckChangedSockets(fd_set& exc_set, fd_set& read_set, fd_set& write_set);
 		bool CheckSelectResult(const int result);
 		NETWORK_ERROR_CODE InitLIsteningSocket();
 		ChatServer::NETWORK_ERROR_CODE BindListenSocket(short port, int backLogCount);
 		void CreateSessionPool(const int totalAcceptCount);
-		ServerConfig* m_config;
+		ServerConfig m_config;
 		fd_set m_fdSet;
 
 		std::vector<ClientSession> m_clientSessionPool;

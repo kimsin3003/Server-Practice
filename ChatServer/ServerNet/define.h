@@ -4,29 +4,29 @@ namespace ChatServer
 
 	struct ServerConfig
 	{
-		unsigned short Port;
-		int BackLogCount;
+		unsigned short port;
+		int backLogCount;
 
-		int MaxClientCount;
-		int ExtraClientCount; // 가능하면 로그인에서 짜르도록 MaxClientCount + 여유분을 준비한다.
+		int maxClientCount;
+		int extraClientCount; // 가능하면 로그인에서 짜르도록 MaxClientCount + 여유분을 준비한다.
 
-		short MaxClientSockOptRecvBufferSize;
-		short MaxClientSockOptSendBufferSize;
-		short MaxClientRecvBufferSize;
-		short MaxClientSendBufferSize;
+		short maxClientSockOptRecvBufferSize;
+		short maxClientSockOptSendBufferSize;
+		short maxClientRecvBufferSize;
+		short maxClientSendBufferSize;
 
-		int MaxLobbyCount;
-		int MaxLobbyUserCount;
-		int MaxRoomCountByLobby;
-		int MaxRoomUserCount;
+		int maxLobbyCount;
+		int maxLobbyUserCount;
+		int maxRoomCountByLobby;
+		int maxRoomUserCount;
 	};
 
 	const int MAX_IP_LEN = 32; // IP 문자열 최대 길이
 	const int MAX_PACKET_SIZE = 1024; // 최대 패킷 크기
-									  //const int MAX_SOCK_OPT_RECV_BUUER_SIZE = MAX_PACKET_SIZE * 10; // 소켓 옵션용 받기 버퍼 크기
-									  //const int MAX_SOCK_OPT_SEND_BUUER_SIZE = MAX_PACKET_SIZE * 10; // 소켓 옵션용 보내기 버퍼 크기
-									  //const int MAX_CLIENT_RECV_BUFFER_SIZE = MAX_PACKET_SIZE * 8; // 클라이언트 받기용 최대 버퍼 크기
-									  //const int MAX_CLIENT_SEND_BUFFER_SIZE = MAX_PACKET_SIZE * 8; // 4k. 클라이언트 보내기용 최대 버퍼 크기
+	//const int MAX_SOCK_OPT_RECV_BUUER_SIZE = MAX_PACKET_SIZE * 10; // 소켓 옵션용 받기 버퍼 크기
+	//const int MAX_SOCK_OPT_SEND_BUUER_SIZE = MAX_PACKET_SIZE * 10; // 소켓 옵션용 보내기 버퍼 크기
+	//const int MAX_CLIENT_RECV_BUFFER_SIZE = MAX_PACKET_SIZE * 8; // 클라이언트 받기용 최대 버퍼 크기
+	//const int MAX_CLIENT_SEND_BUFFER_SIZE = MAX_PACKET_SIZE * 8; // 4k. 클라이언트 보내기용 최대 버퍼 크기
 
 	struct ClientSession
 	{
