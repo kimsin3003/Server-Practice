@@ -1,6 +1,7 @@
 #include "NetworkSystem.h"
 #include <memory.h>
 #include <Winsock2.h>
+#include "define.h"
 #include "Logger.h"
 
 namespace ChatServer
@@ -61,6 +62,17 @@ namespace ChatServer
 		m_logger->Write(LOG_TYPE::L_INFO, "%s | Listen. ServerSockfd(%d)", __FUNCTION__, m_listeningSocket);
 
 		return NETWORK_ERROR_CODE::NONE;
+	}
+
+	void NetworkSystem::CreateSessionPool(const int totalAcceptCount)
+	{
+		for (int i = 0; i < totalAcceptCount; i++)
+		{
+			ClientSession session;
+			ZeroMemory(&session, sizeof(session));
+			session.Index = i;
+			session.pRecvBuffer = new char[m_config->maxClientCount];
+		}
 	}
 
 	ChatServer::NETWORK_ERROR_CODE NetworkSystem::InitLIsteningSocket()
