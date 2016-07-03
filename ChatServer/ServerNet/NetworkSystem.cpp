@@ -1,7 +1,6 @@
 #include "NetworkSystem.h"
 #include <memory.h>
 #include <Winsock2.h>
-#include "define.h"
 #include "Logger.h"
 
 namespace ChatServer
@@ -38,6 +37,8 @@ namespace ChatServer
 		FD_SET(m_listeningSocket, &m_fdSet);
 
 		CreateSessionPool(m_config->maxClientCount + m_config->extraClientCount);
+
+		return NETWORK_ERROR_CODE::NONE;
 	}
 
 	ChatServer::NETWORK_ERROR_CODE NetworkSystem::BindListenSocket(short port, int backLogCount)
@@ -47,8 +48,7 @@ namespace ChatServer
 		server_addr.sin_family = AF_INET;
 		server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 		server_addr.sin_port = htons(port);
-
-		// #강제 형변환할거면 뭐하러 IN으로 만들어서 저 바인딩을 해준건가요...?
+		
 		if (bind(m_listeningSocket, (SOCKADDR*)&server_addr, sizeof(server_addr)) < 0)
 		{
 			return NETWORK_ERROR_CODE::SERVER_SOCKET_BIND_FAIL;
@@ -71,7 +71,12 @@ namespace ChatServer
 			ClientSession session;
 			ZeroMemory(&session, sizeof(session));
 			session.Index = i;
-			session.pRecvBuffer = new char[m_config->maxClientCount];
+			session.pRecvBuffer = new char[m_config->maxClientRecvBufferSize];
+			session.pSendBuffer = new char[m_config->maxClientSendBufferSize];
+
+			m_clientSessionPool.push_back(session);
+			m_ClientSessionPoolIndex.push_back(session.Index);
+
 		}
 	}
 
@@ -102,11 +107,73 @@ namespace ChatServer
 
 	void NetworkSystem::Run()
 	{
+		auto read_set = m_fdSet;
+		auto write_set = m_fdSet;
+		auto exc_set = m_fdSet;
 
+		timeval timeout{ 0, 1000 };
+		auto selectResult = select(0, &read_set, &write_set, &exc_set, &timeout);
+
+		auto isFDSetChanged = CheckSelectResult(selectResult);
+
+		if (!isFDSetChanged)
+		{
+			return;
+		}
+
+		if (FD_ISSET(m_listeningSocket, &m_fdSet))
+		{
+			NewSession();
+		}
+		else
+		{
+			CheckChangedSockets(exc_set, read_set, write_set);
+		}
 
 	}
 
+	void NetworkSystem::NewSession()
+	{
+		
+	}
 
+
+	void NetworkSystem::CheckChangedSockets(fd_set& exc_set, fd_set& read_set, fd_set& write_set)
+	{
+		for (int i = 0; i < m_clientSessionPool.size(); i++)
+		{
+			auto& session = m_clientSessionPool[i];
+
+			if (session.IsConnected() == false)
+			{
+				continue;
+			}
+
+			SOCKET fd = session.SocketFD;
+			auto sessionIndex = session.Index;
+
+			if (FD_ISSET(fd, &exc_set))
+			{
+				CloseSession(SOCKET_CLOSE_CASE::SELECT_ERROR, fd, sessionIndex);
+				continue;
+			}
+		}
+	}
+
+	bool NetworkSystem::CheckSelectResult(const int result)
+	{
+		if (result == 0)
+		{
+			return false;
+		}
+		else if (result == -1)
+		{
+			// TODO:로그 남기기
+			return false;
+		}
+
+		return true;
+	}
 
 	NETWORK_ERROR_CODE NetworkSystem::SendData()
 	{
