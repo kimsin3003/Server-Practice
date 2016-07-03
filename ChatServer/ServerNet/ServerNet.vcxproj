@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="define.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="NetworkSystem.h" />
   </ItemGroup>
